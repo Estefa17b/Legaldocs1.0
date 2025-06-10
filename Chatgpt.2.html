@@ -1,0 +1,1558 @@
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>A&amp;B Power Generator | Generador de Poderes Jurídicos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Times+New+Roman&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #1E3A8A;
+            --secondary-color: #E2E8F0;
+            --success-color: #059669;
+            --danger-color: #DC2626;
+            --warning-color: #D97706;
+            --info-color: #2563EB;
+            --gray-color: #4B5563;
+            --purple-color: #7C3AED;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: #f0f4f8;
+            color: #1E293B;
+        }
+        
+        .editor-container {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+        }
+        
+        .preview-document {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 29.7cm;
+            width: 100%;
+            max-width: 21cm;
+            margin: 0 auto;
+            position: relative;
+            padding: 1cm;
+        }
+        
+        .preview-document .uppercase-bold {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toolbar {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .toolbar button {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        .toolbar button:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .toolbar select {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            border: 1px solid #d1d5db;
+            background-color: white;
+        }
+        
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            border-right: 1px solid #e5e7eb;
+            padding-right: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        .toolbar-group:last-child {
+            border-right: none;
+            padding-right: 0;
+            margin-right: 0;
+        }
+        
+        .document-actions {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            width: 100%;
+            max-width: 21cm;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: sticky;
+            top: 1rem;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .actions-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 100px;
+            height: 36px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-button:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .action-button.copy {
+            background-color: #047857;
+            color: white;
+        }
+        
+        .action-button.pdf {
+            background-color: #B91C1C;
+            color: white;
+        }
+        
+        .action-button.word {
+            background-color: #0050A0;
+            color: white;
+        }
+        
+        .action-button.gdocs {
+            background-color: #1A56DB;
+            color: white;
+        }
+        
+        .action-button.print {
+            background-color: #374151;
+            color: white;
+        }
+        
+        .action-button.html {
+            background-color: #6D28D9;
+            color: white;
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        
+        .toggle-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+            width: 90%;
+            height: 50px;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            margin: 1.5rem auto;
+            display: block;
+            transition: all 0.2s;
+        }
+        
+        .generate-btn:hover {
+            background-color: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4.5rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .footer {
+            background-color: #1E293B;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer a {
+            color: #93C5FD;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .logo-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo-controls {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 0.25rem;
+            padding: 0.25rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .logo-control {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        
+        .logo-control:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border: 1px solid white;
+            border-radius: 50%;
+        }
+        
+        .resize-handle.nw {
+            top: -5px;
+            left: -5px;
+            cursor: nwse-resize;
+        }
+        
+        .resize-handle.ne {
+            top: -5px;
+            right: -5px;
+            cursor: nesw-resize;
+        }
+        
+        .resize-handle.sw {
+            bottom: -5px;
+            left: -5px;
+            cursor: nesw-resize;
+        }
+        
+        .resize-handle.se {
+            bottom: -5px;
+            right: -5px;
+            cursor: nwse-resize;
+        }
+        
+        .signature-line {
+            width: 100%;
+            border-bottom: 1px solid #000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+            color: #6B7280;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-preview i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #D1D5DB;
+        }
+        
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .form-row .form-control {
+            flex: 1;
+        }
+        
+        .form-row .toggle-container {
+            margin-bottom: 0;
+            justify-content: flex-end;
+        }
+        
+        /* Ajuste para alinear todos los toggles a la derecha */
+        .toggle-container {
+            justify-content: flex-end;
+        }
+    
+/* Justifica y agrega espacio solo a párrafos generados */
+.preview-document .body-paragraph {
+    text-align: justify;
+    margin-bottom: 1em;
+}
+
+/* Campo "Cargo" en negrita */
+.bold-label {
+    font-weight: bold;
+}
+
+/* Ajuste toggles: alineados a la derecha */
+.form-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.form-row .form-label {
+    flex: 1;
+}
+
+/* Controles de imagen solo visibles al hacer clic */
+.logo-controls {
+    display: none;
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: rgba(255,255,255,0.9);
+    border-radius: 0.25rem;
+    z-index: 10;
+    gap: 0.25rem;
+}
+.logo-container.active .logo-controls {
+    display: flex;
+}
+</style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.relative{position:relative}.inset-0{inset:0px}.z-50{z-index:50}.m-0{margin:0px}.mx-auto{margin-left:auto;margin-right:auto}.mb-0{margin-bottom:0px}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mt-12{margin-top:3rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.max-h-20{max-height:5rem}.w-3\/4{width:75%}.max-w-3xl{max-width:48rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.overflow-auto{overflow:auto}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-opacity-50{--tw-bg-opacity:0.5}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-4{padding-left:1rem;padding-right:1rem}.pb-24{padding-bottom:6rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-5xl{font-size:3rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.opacity-90{opacity:0.9}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:col-span-2{grid-column:span 2 / span 2}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-6xl{font-size:3.75rem;line-height:1}}</style></head>
+<body>
+<!-- Header -->
+<header class="header">
+<div class="container mx-auto px-4 text-center">
+<h1 class="text-5xl md:text-6xl font-semibold mb-4" style="font-family: 'Playfair Display', serif;">A&amp;B Power Generator</h1>
+<p class="text-xl md:text-2xl mt-4 opacity-90 max-w-3xl mx-auto" style="font-family: 'Cormorant Garamond', serif;">Generador de Poderes Jurídicos para Trámites en Entidades Públicas Panameñas</p>
+</div>
+</header>
+<div class="container mx-auto px-4 pb-24">
+<!-- Formulario -->
+<div class="form-card">
+<div class="section-title">
+                Configuración del Documento
+            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="form-group">
+<label class="form-label">Tipo de Poder</label>
+<select class="form-control" id="powerType">
+<option value="especial">Poder Especial</option>
+<option value="general">Poder General</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Entidad Destinataria</label>
+<select class="form-control" id="entityType">
+<option value="dgi">Dirección General de Ingresos</option>
+<option value="mef">Ministerio de Economía y Finanzas</option>
+<option value="mitradel">Ministerio de Trabajo y Desarrollo Laboral</option>
+<option value="anati">Autoridad Nacional de Tierras</option>
+<option value="acodeco">Autoridad de Protección al Consumidor</option>
+<option value="acp">Autoridad del Canal de Panamá</option>
+<option value="minsa">Ministerio de Salud</option>
+<option value="meduca">Ministerio de Educación</option>
+<option value="atp">Autoridad de Turismo de Panamá</option>
+<option value="asep">Autoridad de los Servicios Públicos</option>
+<option value="anam">Autoridad Nacional del Ambiente</option>
+<option value="css">Caja de Seguro Social</option>
+<option value="custom">Otra (Personalizada)</option>
+</select>
+</div>
+<div class="form-group hidden" id="customEntityDiv">
+<label class="form-label">Nombre de Entidad Personalizada</label>
+<input class="form-control" id="customEntity" placeholder="Ej: Tribunal Electoral de Panamá" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Logo de la Firma</label>
+<input accept="image/*" class="form-control" id="logoUpload" type="file"/>
+<div class="mt-2">
+<img class="hidden max-h-20" id="logoPreview"/>
+</div>
+</div>
+</div>
+</div>
+<div class="form-card">
+<div class="section-title">
+                Datos del Otorgante
+            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="form-group">
+<label class="form-label">Nombre Completo</label>
+<input class="form-control" id="otorganteNombre" placeholder="Ej: Juan Antonio Pérez González" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Género</label>
+<select class="form-control" id="otorganteGenero">
+<option value="mujer">Mujer</option>
+<option value="varon">Varón</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Nacionalidad</label>
+<input class="form-control" id="otorganteNacionalidad" placeholder="Ej: panameño/a" type="text" value="panameño/a"/>
+</div>
+<div class="form-group">
+<label class="form-label">Cédula</label>
+<input class="form-control" id="otorganteCedula" placeholder="Ej: 8-123-456" type="text"/>
+</div>
+<div class="form-group md:col-span-2">
+<div class="form-row">
+<label class="form-label mb-0">Domicilio</label>
+<div class="toggle-container m-0">
+<label class="toggle-switch">
+<input checked="" id="toggleDomicilio" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+<textarea class="form-control" id="otorganteDomicilio" placeholder="Ej: Provincia de Panamá, Distrito de Panamá, Corregimiento de Bella Vista, Urbanización El Cangrejo, Calle 50, Edificio Torre Nova, Apartamento 15B" rows="3"></textarea>
+</div>
+<div class="form-group">
+<div class="form-row">
+<label class="form-label mb-0">Cargo</label>
+<div class="toggle-container m-0">
+<label class="toggle-switch">
+<input checked="" id="toggleCargos" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+<input class="form-control" id="otorganteCargo" placeholder="Ej: Gerente General" type="text"/>
+</div>
+</div>
+</div>
+<div class="form-card">
+<div class="form-row mb-4">
+<div class="section-title mb-0">
+                    Datos de la Organización/Sociedad
+                </div>
+<div class="toggle-container m-0">
+<label class="toggle-switch">
+<input checked="" id="toggleOrganizacion" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="organizacionFields">
+<div class="form-group">
+<label class="form-label">Nombre de la Organización</label>
+<input class="form-control" id="organizacionNombre" placeholder="Ej: Inversiones Pacífico, S.A." type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Tipo de Organización</label>
+<select class="form-control" id="organizacionTipo">
+<option value="sociedad_anonima">Sociedad Anónima</option>
+<option value="asociacion">Asociación</option>
+<option value="fundacion">Fundación</option>
+<option value="ong">ONG</option>
+<option value="otro">Otro</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Folio/Registro</label>
+<input class="form-control" id="organizacionFolio" placeholder="Ej: 123456789" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Domicilio de la Organización</label>
+<textarea class="form-control" id="organizacionDomicilio" placeholder="Ej: Calle 50, Edificio Global Plaza, Piso 20, Ciudad de Panamá" rows="3"></textarea>
+</div>
+</div>
+</div>
+<div class="form-card">
+<div class="section-title">
+                Datos del Apoderado
+            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="form-group">
+<label class="form-label">Nombre Completo</label>
+<input class="form-control" id="apoderadoNombre" placeholder="Ej: María Fernanda Gómez Díaz" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Género</label>
+<select class="form-control" id="apoderadoGenero">
+<option value="varon">Varón</option>
+<option value="mujer">Mujer</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Nacionalidad</label>
+<input class="form-control" id="apoderadoNacionalidad" placeholder="Ej: panameño/a" type="text" value="panameño/a"/>
+</div>
+<div class="form-group">
+<label class="form-label">Cédula</label>
+<input class="form-control" id="apoderadoCedula" placeholder="Ej: 4-789-012" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Profesión</label>
+<input class="form-control" id="apoderadoProfesion" placeholder="Ej: abogado/a" type="text" value="abogado/a"/>
+</div>
+<div class="form-group">
+<div class="form-row">
+<label class="form-label mb-0">Número de Idoneidad</label>
+<div class="toggle-container m-0">
+<label class="toggle-switch">
+<input checked="" id="toggleIdoneidad" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+<input class="form-control" id="apoderadoIdoneidad" placeholder="Ej: 12345" type="text"/>
+</div>
+<div class="form-group">
+<div class="form-row">
+<label class="form-label mb-0">Cargo</label>
+<div class="toggle-container m-0">
+<label class="toggle-switch">
+<input checked="" id="toggleApoderadoCargo" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+</div>
+<input class="form-control" id="apoderadoCargo" placeholder="Ej: Asesor Legal" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Correo Electrónico</label>
+<input class="form-control" id="apoderadoEmail" placeholder="Ej: nombre@ejemplo.com" type="email"/>
+</div>
+<div class="form-group">
+<label class="form-label">Domicilio Profesional</label>
+<textarea class="form-control" id="apoderadoDomicilio" placeholder="Ej: Avenida Balboa, Edificio Torre Mar, Oficina 505, Ciudad de Panamá" rows="3"></textarea>
+</div>
+<div class="form-group">
+<label class="form-label">Teléfono</label>
+<input class="form-control" id="apoderadoTelefono" placeholder="Ej: +507 269-1234" type="text"/>
+</div>
+</div>
+</div>
+<div class="form-card">
+<div class="section-title">
+                Objeto del Poder
+            </div>
+<div class="form-group">
+<label class="form-label">Descripción del Objeto</label>
+<textarea class="form-control" id="objetoPoder" placeholder="Ej: representarme en todos los trámites relacionados con la solicitud de exoneración de impuestos sobre bienes inmuebles" rows="5"></textarea>
+</div>
+</div>
+<div class="form-card">
+<div class="section-title">
+                Fecha y Lugar
+            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="form-group">
+<label class="form-label">Lugar</label>
+<input class="form-control" id="lugar" placeholder="Ej: Ciudad de Panamá" type="text" value="Panamá"/>
+</div>
+<div class="form-group">
+<label class="form-label">Fecha</label>
+<input class="form-control" id="fecha" type="date"/>
+</div>
+</div>
+</div>
+<button class="generate-btn" id="generateBtn">
+<i class="fas fa-file-alt mr-2"></i> Generar Documento
+        </button>
+<!-- Vista Previa -->
+<div class="mt-12 relative" id="previewSection">
+<h2 class="text-2xl font-semibold text-gray-800 mb-6">Vista Previa del Documento</h2>
+<div class="document-actions" id="documentActions" style="position: sticky; top: 1rem;">
+<div class="actions-row mb-2">
+<button class="action-button copy" id="copyDocBtn">
+<i class="fas fa-copy"></i>
+<span>Copiar</span>
+</button>
+<button class="action-button pdf" id="downloadPdfBtn">
+<i class="fas fa-file-pdf"></i>
+<span>PDF</span>
+</button>
+<button class="action-button word" id="downloadWordBtn">
+<i class="fas fa-file-word"></i>
+<span>Word</span>
+</button>
+</div>
+<div class="actions-row">
+<button class="action-button gdocs" id="downloadGDocsBtn">
+<i class="fas fa-file-alt"></i>
+<span>Google Docs</span>
+</button>
+<button class="action-button print" id="printBtn">
+<i class="fas fa-print"></i>
+<span>Imprimir</span>
+</button>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+<div class="toolbar">
+<div class="toolbar-group">
+<select class="text-sm" id="fontFamily">
+<option selected="" value="'Times New Roman', serif">Times New Roman</option>
+<option value="Georgia, serif">Georgia</option>
+<option value="Arial, sans-serif">Arial</option>
+<option value="'Courier New', monospace">Courier New</option>
+</select>
+<select class="text-sm ml-2" id="fontSize">
+<option value="10pt">10pt</option>
+<option value="11pt">11pt</option>
+<option selected="" value="12pt">12pt</option>
+<option value="14pt">14pt</option>
+<option value="16pt">16pt</option>
+<option value="18pt">18pt</option>
+</select>
+</div>
+<div class="toolbar-group">
+<button id="boldBtn" title="Negrita"><i class="fas fa-bold"></i></button>
+<button id="italicBtn" title="Cursiva"><i class="fas fa-italic"></i></button>
+<button id="underlineBtn" title="Subrayado"><i class="fas fa-underline"></i></button>
+</div>
+<div class="toolbar-group">
+<button id="alignLeftBtn" title="Alinear a la izquierda"><i class="fas fa-align-left"></i></button>
+<button id="alignCenterBtn" title="Centrar"><i class="fas fa-align-center"></i></button>
+<button id="alignRightBtn" title="Alinear a la derecha"><i class="fas fa-align-right"></i></button>
+<button id="alignJustifyBtn" title="Justificar"><i class="fas fa-align-justify"></i></button>
+</div>
+<div class="toolbar-group">
+<select class="text-sm" id="lineHeight">
+<option value="1">Simple</option>
+<option selected="" value="1.5">1.5</option>
+<option value="2">Doble</option>
+</select>
+</div>
+</div>
+<div class="editor-container">
+<div class="preview-document" contenteditable="true" id="documentPreview">
+<div class="empty-preview">
+<i class="fas fa-file-alt"></i>
+<h3 class="text-xl font-medium mb-2">Vista previa no disponible</h3>
+<p>Haz clic en "Generar Documento" para ver la vista previa del poder jurídico.</p>
+</div>
+</div>
+</div>
+</div>
+<button class="action-button html" id="showHtmlBtn">
+<i class="fas fa-code"></i>
+<span>Ver HTML</span>
+</button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<h3 class="text-xl font-semibold mb-4">A&amp;B Power Generator</h3>
+<p class="mb-4">Herramienta para la creación de documentos legales de representación para trámites en entidades públicas panameñas.</p>
+<h4 class="text-lg font-medium mb-2">Información Legal</h4>
+<p class="mb-1">Este generador crea documentos que deben ser revisados por un profesional del derecho antes de su uso oficial.</p>
+<p>Los documentos generados son plantillas y pueden requerir adaptaciones según el caso específico.</p>
+</div>
+<div>
+<h4 class="text-lg font-medium mb-4">Contacto</h4>
+<p class="mb-2">Para consultas legales, contacte a un abogado especializado.</p>
+<p class="mb-2">Teléfonos: +507 6684-6895 / +507 6577-0502</p>
+<p class="mb-2">Email: <a href="mailto:estefania.bd17@gmail.com">estefania.bd17@gmail.com</a></p>
+<p class="mt-4">© 2025 Hecho por EBD y RAAG. Todos los derechos reservados.</p>
+</div>
+</div>
+</div>
+</footer>
+<!-- Modal para mostrar el código HTML -->
+<div class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50" id="htmlModal">
+<div class="bg-white p-6 rounded-lg shadow-lg w-3/4 max-h-3/4 overflow-auto">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold">Código HTML</h3>
+<button class="text-gray-500 hover:text-gray-700" id="closeHtmlModal">
+<i class="fas fa-times"></i>
+</button>
+</div>
+<div class="mb-4">
+<button class="action-button copy" id="copyHtmlBtn">
+<i class="fas fa-copy mr-1"></i> Copiar HTML
+                </button>
+</div>
+<pre class="bg-gray-100 p-4 rounded overflow-auto text-sm" id="htmlCode" style="max-height: 500px;"></pre>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer la fecha actual por defecto
+            const today = new Date();
+            document.getElementById('fecha').valueAsDate = today;
+            
+            // Mostrar/ocultar campos personalizados
+            document.getElementById('entityType').addEventListener('change', function() {
+                const customEntityDiv = document.getElementById('customEntityDiv');
+                if (this.value === 'custom') {
+                    customEntityDiv.classList.remove('hidden');
+                } else {
+                    customEntityDiv.classList.add('hidden');
+                }
+            });
+            
+            // Toggles para mostrar/ocultar secciones
+            document.getElementById('toggleDomicilio').addEventListener('change', function() {
+                const domicilioFields = document.getElementById('otorganteDomicilio');
+                domicilioFields.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            document.getElementById('toggleCargos').addEventListener('change', function() {
+                const cargosFields = document.getElementById('otorganteCargo');
+                cargosFields.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            document.getElementById('toggleOrganizacion').addEventListener('change', function() {
+                const organizacionFields = document.getElementById('organizacionFields');
+                organizacionFields.style.display = this.checked ? 'grid' : 'none';
+            });
+            
+            document.getElementById('toggleApoderadoCargo').addEventListener('change', function() {
+                const apoderadoCargoFields = document.getElementById('apoderadoCargo');
+                apoderadoCargoFields.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            document.getElementById('toggleIdoneidad').addEventListener('change', function() {
+                const idoneidadFields = document.getElementById('apoderadoIdoneidad');
+                idoneidadFields.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            // Subir logo
+            document.getElementById('logoUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const logoPreview = document.getElementById('logoPreview');
+                        logoPreview.src = event.target.result;
+                        logoPreview.classList.remove('hidden');
+                        
+                        // También actualizar el logo en la previsualización
+                        updateLogoInPreview(event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            function updateLogoInPreview(logoSrc) {
+                const logoContainer = document.getElementById('logoContainer');
+                if (logoContainer) {
+                    logoContainer.innerHTML = '';
+                    
+                    const logoImg = document.createElement('img');
+                    logoImg.src = logoSrc;
+                    logoImg.style.maxWidth = '150px';
+                    logoImg.style.maxHeight = '80px';
+                    logoImg.id = 'previewLogo';
+                    logoContainer.appendChild(logoImg);
+                    
+                    // Agregar controles para el logo
+                    const logoControls = document.createElement('div');
+                    logoControls.className = 'logo-controls';
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'logo-control';
+                    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    deleteBtn.title = 'Eliminar logo';
+                    deleteBtn.addEventListener('click', function() {
+                        logoContainer.innerHTML = '';
+                        document.getElementById('logoPreview').classList.add('hidden');
+                        document.getElementById('logoUpload').value = '';
+                    });
+                    
+                    logoControls.appendChild(deleteBtn);
+                    logoContainer.appendChild(logoControls);
+                    
+                    // Agregar manejadores de redimensionamiento
+                    addResizeHandles(logoContainer, logoImg);
+                }
+            }
+            
+            function addResizeHandles(container, element) {
+                const handles = [
+                    { class: 'nw', cursor: 'nwse-resize' },
+                    { class: 'ne', cursor: 'nesw-resize' },
+                    { class: 'sw', cursor: 'nesw-resize' },
+                    { class: 'se', cursor: 'nwse-resize' }
+                ];
+                
+                handles.forEach(handle => {
+                    const handleElement = document.createElement('div');
+                    handleElement.className = `resize-handle ${handle.class}`;
+                    handleElement.style.cursor = handle.cursor;
+                    container.appendChild(handleElement);
+                    
+                    handleElement.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        
+                        const startX = e.clientX;
+                        const startY = e.clientY;
+                        const startWidth = element.offsetWidth;
+                        const startHeight = element.offsetHeight;
+                        
+                        function handleMouseMove(e) {
+                            let newWidth, newHeight;
+                            
+                            if (handle.class === 'se' || handle.class === 'ne') {
+                                newWidth = startWidth + (e.clientX - startX);
+                            } else {
+                                newWidth = startWidth - (e.clientX - startX);
+                            }
+                            
+                            if (handle.class === 'se' || handle.class === 'sw') {
+                                newHeight = startHeight + (e.clientY - startY);
+                            } else {
+                                newHeight = startHeight - (e.clientY - startY);
+                            }
+                            
+                            // Mantener proporción
+                            const ratio = startWidth / startHeight;
+                            if (Math.abs(newWidth - startWidth) > Math.abs(newHeight - startHeight)) {
+                                newHeight = newWidth / ratio;
+                            } else {
+                                newWidth = newHeight * ratio;
+                            }
+                            
+                            // Aplicar nuevas dimensiones con límites
+                            if (newWidth > 50 && newHeight > 50 && newWidth < 300 && newHeight < 200) {
+                                element.style.width = `${newWidth}px`;
+                                element.style.height = `${newHeight}px`;
+                            }
+                        }
+                        
+                        function handleMouseUp() {
+                            document.removeEventListener('mousemove', handleMouseMove);
+                            document.removeEventListener('mouseup', handleMouseUp);
+                        }
+                        
+                        document.addEventListener('mousemove', handleMouseMove);
+                        document.addEventListener('mouseup', handleMouseUp);
+                    });
+                });
+            }
+            
+            // Hacer que los botones de acción sean sticky siempre
+            const documentActions = document.getElementById('documentActions');
+            documentActions.style.position = 'sticky';
+            documentActions.style.top = '1rem';
+            
+            // Generar documento
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                generateDocument();
+                // Desplazarse a la vista previa
+                document.querySelector('h2').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Funciones de edición de texto
+            document.getElementById('fontFamily').addEventListener('change', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.getElementById('documentPreview').style.fontFamily = this.value;
+            });
+            
+            document.getElementById('fontSize').addEventListener('change', function() {
+                document.execCommand('styleWithCSS', false, true);
+                document.getElementById('documentPreview').style.fontSize = this.value;
+            });
+            
+            document.getElementById('boldBtn').addEventListener('click', function() {
+                document.execCommand('bold', false, null);
+            });
+            
+            document.getElementById('italicBtn').addEventListener('click', function() {
+                document.execCommand('italic', false, null);
+            });
+            
+            document.getElementById('underlineBtn').addEventListener('click', function() {
+                document.execCommand('underline', false, null);
+            });
+            
+            document.getElementById('alignLeftBtn').addEventListener('click', function() {
+                document.execCommand('justifyLeft', false, null);
+            });
+            
+            document.getElementById('alignCenterBtn').addEventListener('click', function() {
+                document.execCommand('justifyCenter', false, null);
+            });
+            
+            document.getElementById('alignRightBtn').addEventListener('click', function() {
+                document.execCommand('justifyRight', false, null);
+            });
+            
+            document.getElementById('alignJustifyBtn').addEventListener('click', function() {
+                document.execCommand('justifyFull', false, null);
+            });
+            
+            document.getElementById('lineHeight').addEventListener('change', function() {
+                document.getElementById('documentPreview').style.lineHeight = this.value;
+            });
+            
+            // Mostrar modal con HTML
+            document.getElementById('showHtmlBtn').addEventListener('click', function() {
+                // Obtener el HTML completo de la página
+                const htmlContent = document.documentElement.outerHTML;
+                document.getElementById('htmlCode').textContent = htmlContent;
+                document.getElementById('htmlModal').classList.remove('hidden');
+            });
+            
+            // Cerrar modal
+            document.getElementById('closeHtmlModal').addEventListener('click', function() {
+                document.getElementById('htmlModal').classList.add('hidden');
+            });
+            
+            // Copiar HTML
+            document.getElementById('copyHtmlBtn').addEventListener('click', function() {
+                const htmlCode = document.getElementById('htmlCode').textContent;
+                navigator.clipboard.writeText(htmlCode).then(function() {
+                    showNotification('Código HTML copiado al portapapeles');
+                }, function(err) {
+                    console.error('Error al copiar: ', err);
+                });
+            });
+            
+            // Copiar documento
+            document.getElementById('copyDocBtn').addEventListener('click', function() {
+                const docContent = document.getElementById('documentPreview').innerText;
+                navigator.clipboard.writeText(docContent).then(function() {
+                    showNotification('Documento copiado al portapapeles');
+                }, function(err) {
+                    console.error('Error al copiar: ', err);
+                });
+            });
+            
+            // Descargar como Word
+            document.getElementById('downloadWordBtn').addEventListener('click', function() {
+                const header = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <title>Poder Jurídico</title>
+                    <style>
+                        @page {
+                            size: 8.5in 14in; /* Tamaño Legal */
+                            margin: 2.52cm;
+                        }
+                        body {
+                            font-family: 'Times New Roman', serif;
+                            font-size: 12pt;
+                            line-height: 1.5;
+                        }
+                        .uppercase-bold {
+                            text-transform: uppercase;
+                            font-weight: bold;
+                        }
+                        .signature-line {
+                            width: 100%;
+                            border-bottom: 1px solid #000;
+                            margin-bottom: 0.5rem;
+                        }
+                        p {
+                            margin-bottom: 1em;
+                        }
+                    </style>
+                </head>
+                <body>`;
+                const footer = '</body></html>';
+                
+                // Clonar el contenido para no modificar el original
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = document.getElementById('documentPreview').innerHTML;
+                
+                // Asegurarse de que todos los elementos tengan los estilos correctos
+                const spans = tempDiv.querySelectorAll('span');
+                spans.forEach(span => {
+                    if (span.textContent.trim() !== '') {
+                        span.classList.add('uppercase-bold');
+                    }
+                });
+                
+                const sourceHTML = header + tempDiv.innerHTML + footer;
+                
+                const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+                const fileDownload = document.createElement('a');
+                document.body.appendChild(fileDownload);
+                fileDownload.href = source;
+                fileDownload.download = 'poder_juridico.doc';
+                fileDownload.click();
+                document.body.removeChild(fileDownload);
+                showNotification('Documento descargado en formato Word');
+            });
+            
+            // Descargar como PDF
+            document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+                // Verificar que las bibliotecas estén cargadas
+                if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                    showNotification('Cargando bibliotecas necesarias...');
+                    
+                    // Cargar jsPDF si no está disponible
+                    const jsPdfScript = document.createElement('script');
+                    jsPdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                    document.head.appendChild(jsPdfScript);
+                    
+                    // Cargar html2canvas si no está disponible
+                    const html2canvasScript = document.createElement('script');
+                    html2canvasScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                    document.head.appendChild(html2canvasScript);
+                    
+                    // Esperar a que se carguen las bibliotecas
+                    setTimeout(() => {
+                        generatePDF();
+                    }, 2000);
+                } else {
+                    generatePDF();
+                }
+            });
+            
+            function generatePDF() {
+                // Clonar el contenido para no modificar el original
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = document.getElementById('documentPreview').innerHTML;
+                tempDiv.style.fontFamily = "'Times New Roman', serif";
+                tempDiv.style.fontSize = "12pt";
+                tempDiv.style.lineHeight = "1.5";
+                tempDiv.style.padding = "1cm";
+                tempDiv.style.backgroundColor = "white";
+                tempDiv.style.width = "21cm";
+                tempDiv.style.minHeight = "35.56cm"; // Tamaño legal
+                
+                // Asegurarse de que todos los elementos tengan los estilos correctos
+                const spans = tempDiv.querySelectorAll('span');
+                spans.forEach(span => {
+                    if (span.textContent.trim() !== '') {
+                        span.style.textTransform = 'uppercase';
+                        span.style.fontWeight = 'bold';
+                    }
+                });
+                
+                document.body.appendChild(tempDiv);
+                
+                html2canvas(tempDiv, {
+                    scale: 2, // Mayor calidad
+                    useCORS: true,
+                    logging: false
+                }).then(canvas => {
+                    document.body.removeChild(tempDiv);
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    try {
+                        // Crear PDF en tamaño legal
+                        const pdf = new window.jspdf.jsPDF({
+                            orientation: 'portrait',
+                            unit: 'in',
+                            format: 'legal' // 8.5 x 14 pulgadas
+                        });
+                        
+                        const imgProps = pdf.getImageProperties(imgData);
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save('poder_juridico.pdf');
+                        showNotification('Documento descargado en formato PDF');
+                    } catch (e) {
+                        console.error('Error al generar PDF:', e);
+                        showNotification('Error al generar el PDF. Intente nuevamente.');
+                    }
+                }).catch(err => {
+                    document.body.removeChild(tempDiv);
+                    console.error('Error en html2canvas:', err);
+                    showNotification('Error al generar la imagen del documento');
+                });
+            }
+            
+            // Google Docs (mejorado)
+            document.getElementById('downloadGDocsBtn').addEventListener('click', function() {
+                // Clonar el contenido para no modificar el original
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = document.getElementById('documentPreview').innerHTML;
+                
+                // Asegurarse de que todos los elementos tengan los estilos correctos
+                const spans = tempDiv.querySelectorAll('span');
+                spans.forEach(span => {
+                    if (span.textContent.trim() !== '') {
+                        span.style.textTransform = 'uppercase';
+                        span.style.fontWeight = 'bold';
+                    }
+                });
+                
+                const docContent = tempDiv.innerText;
+                const encodedContent = encodeURIComponent(docContent);
+                const googleDocsUrl = `https://docs.new/?title=Poder_Juridico&body=${encodedContent}`;
+                
+                window.open(googleDocsUrl, '_blank');
+                showNotification('Abriendo documento en Google Docs...');
+            });
+            
+            // Imprimir (mejorado)
+            document.getElementById('printBtn').addEventListener('click', function() {
+                // Clonar el contenido para no modificar el original
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = document.getElementById('documentPreview').innerHTML;
+                
+                // Asegurarse de que todos los elementos tengan los estilos correctos
+                const spans = tempDiv.querySelectorAll('span');
+                spans.forEach(span => {
+                    if (span.textContent.trim() !== '') {
+                        span.style.textTransform = 'uppercase';
+                        span.style.fontWeight = 'bold';
+                    }
+                });
+                
+                const printContents = tempDiv.innerHTML;
+                const originalContents = document.body.innerHTML;
+                
+                document.body.innerHTML = `
+                    <style>
+                        @page {
+                            size: legal; /* 8.5in x 14in */
+                            margin: 2.52cm;
+                        }
+                        body {
+                            font-family: 'Times New Roman', serif;
+                            font-size: 12pt;
+                            line-height: 1.5;
+                            color: #000;
+                        }
+                        .uppercase-bold {
+                            text-transform: uppercase;
+                            font-weight: bold;
+                        }
+                        .signature-line {
+                            width: 100%;
+                            border-bottom: 1px solid #000;
+                            margin-bottom: 0.5rem;
+                        }
+                        p {
+                            margin-bottom: 1em;
+                        }
+                        span {
+                            text-transform: uppercase;
+                            font-weight: bold;
+                        }
+                    </style>
+                    <div style="max-width: 21cm; margin: 0 auto;">
+                        ${printContents}
+                    </div>
+                `;
+                
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            });
+            
+            // Mostrar notificación
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('opacity-0');
+                    notification.style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Función para formatear la fecha correctamente
+            function formatearFecha(fechaInput) {
+                if (!fechaInput) return '[FECHA]';
+                
+                try {
+                    // Asegurarse de que la fecha se procese correctamente
+                    const fecha = new Date(fechaInput + 'T00:00:00');
+                    
+                    // Verificar si la fecha es válida
+                    if (isNaN(fecha.getTime())) {
+                        console.error('Fecha inválida:', fechaInput);
+                        return '[FECHA INVÁLIDA]';
+                    }
+                    
+                    const dia = fecha.getDate();
+                    
+                    // Obtener el nombre del mes en español
+                    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                    const mes = meses[fecha.getMonth()];
+                    
+                    const anio = fecha.getFullYear();
+                    
+                    return `${dia} de ${mes} de ${anio}`;
+                } catch (error) {
+                    console.error('Error al formatear fecha:', error);
+                    return '[ERROR EN FECHA]';
+                }
+            }
+            
+            // Función para generar el documento
+            function generateDocument() {
+                // Obtener todos los valores del formulario
+                const powerType = document.getElementById('powerType').value;
+                const entityType = document.getElementById('entityType').value;
+                let entityName = '';
+                
+                switch(entityType) {
+                    case 'dgi':
+                        entityName = 'DIRECCIÓN GENERAL DE INGRESOS';
+                        break;
+                    case 'mef':
+                        entityName = 'MINISTERIO DE ECONOMÍA Y FINANZAS';
+                        break;
+                    case 'mitradel':
+                        entityName = 'MINISTERIO DE TRABAJO Y DESARROLLO LABORAL';
+                        break;
+                    case 'anati':
+                        entityName = 'AUTORIDAD NACIONAL DE TIERRAS';
+                        break;
+                    case 'acodeco':
+                        entityName = 'AUTORIDAD DE PROTECCIÓN AL CONSUMIDOR';
+                        break;
+                    case 'acp':
+                        entityName = 'AUTORIDAD DEL CANAL DE PANAMÁ';
+                        break;
+                    case 'minsa':
+                        entityName = 'MINISTERIO DE SALUD';
+                        break;
+                    case 'meduca':
+                        entityName = 'MINISTERIO DE EDUCACIÓN';
+                        break;
+                    case 'atp':
+                        entityName = 'AUTORIDAD DE TURISMO DE PANAMÁ';
+                        break;
+                    case 'asep':
+                        entityName = 'AUTORIDAD DE LOS SERVICIOS PÚBLICOS';
+                        break;
+                    case 'anam':
+                        entityName = 'AUTORIDAD NACIONAL DEL AMBIENTE';
+                        break;
+                    case 'css':
+                        entityName = 'CAJA DE SEGURO SOCIAL';
+                        break;
+                    case 'custom':
+                        entityName = document.getElementById('customEntity').value.toUpperCase();
+                        break;
+                }
+                
+                // Datos del otorgante
+                const otorganteNombre = document.getElementById('otorganteNombre').value || '[NOMBRE DEL OTORGANTE]';
+                const otorganteGenero = document.getElementById('otorganteGenero').value;
+                const otorganteGeneroTexto = otorganteGenero === 'mujer' ? 'mujer' : 'varón';
+                const otorganteNacionalidad = document.getElementById('otorganteNacionalidad').value || 'panameño/a';
+                const otorganteNacionalidadTexto = otorganteGenero === 'mujer' ? 
+                    otorganteNacionalidad.replace('o/a', 'a').replace('ño/a', 'ña') : 
+                    otorganteNacionalidad.replace('o/a', 'o').replace('ño/a', 'ño');
+                const otorganteCedula = document.getElementById('otorganteCedula').value || '[NÚMERO DE CÉDULA]';
+                const otorganteDomicilio = document.getElementById('otorganteDomicilio').value || '[DOMICILIO DEL OTORGANTE]';
+                const otorganteCargo = document.getElementById('otorganteCargo').value || '[CARGO]';
+                
+                // Datos de la organización
+                const incluirOrganizacion = document.getElementById('toggleOrganizacion').checked;
+                const organizacionNombre = document.getElementById('organizacionNombre').value || '[NOMBRE DE LA ORGANIZACIÓN]';
+                const organizacionTipo = document.getElementById('organizacionTipo').value;
+                let organizacionTipoTexto = '';
+                
+                switch(organizacionTipo) {
+                    case 'sociedad_anonima':
+                        organizacionTipoTexto = 'Sociedad Anónima';
+                        break;
+                    case 'asociacion':
+                        organizacionTipoTexto = 'Asociación';
+                        break;
+                    case 'fundacion':
+                        organizacionTipoTexto = 'Fundación';
+                        break;
+                    case 'ong':
+                        organizacionTipoTexto = 'Organización No Gubernamental';
+                        break;
+                    default:
+                        organizacionTipoTexto = 'institución';
+                }
+                
+                const organizacionFolio = document.getElementById('organizacionFolio').value || '[NÚMERO DE FOLIO]';
+                const organizacionDomicilio = document.getElementById('organizacionDomicilio').value || '[DOMICILIO DE LA ORGANIZACIÓN]';
+                
+                // Datos del apoderado
+                const apoderadoNombre = document.getElementById('apoderadoNombre').value || '[NOMBRE DEL APODERADO]';
+                const apoderadoGenero = document.getElementById('apoderadoGenero').value;
+                const apoderadoGeneroTexto = apoderadoGenero === 'mujer' ? 'mujer' : 'varón';
+                const apoderadoNacionalidad = document.getElementById('apoderadoNacionalidad').value || 'panameño/a';
+                const apoderadoNacionalidadTexto = apoderadoGenero === 'mujer' ? 
+                    apoderadoNacionalidad.replace('o/a', 'a').replace('ño/a', 'ña') : 
+                    apoderadoNacionalidad.replace('o/a', 'o').replace('ño/a', 'ño');
+                const apoderadoCedula = document.getElementById('apoderadoCedula').value || '[NÚMERO DE CÉDULA]';
+                const apoderadoProfesion = document.getElementById('apoderadoProfesion').value || 'abogado/a';
+                const apoderadoProfesionTexto = apoderadoGenero === 'mujer' ? 
+                    apoderadoProfesion.replace('o/a', 'a').replace('do/a', 'da') : 
+                    apoderadoProfesion.replace('o/a', 'o').replace('do/a', 'do');
+                
+                const incluirIdoneidad = document.getElementById('toggleIdoneidad').checked;
+                const apoderadoIdoneidad = document.getElementById('apoderadoIdoneidad').value || '[NÚMERO DE IDONEIDAD]';
+                
+                const incluirApoderadoCargo = document.getElementById('toggleApoderadoCargo').checked;
+                const apoderadoCargo = document.getElementById('apoderadoCargo').value || '[CARGO]';
+                const apoderadoEmail = document.getElementById('apoderadoEmail').value || '[CORREO ELECTRÓNICO]';
+                const apoderadoDomicilio = document.getElementById('apoderadoDomicilio').value || '[DOMICILIO PROFESIONAL]';
+                const apoderadoTelefono = document.getElementById('apoderadoTelefono').value || '[TELÉFONO]';
+                
+                // Objeto del poder
+                const objetoPoder = document.getElementById('objetoPoder').value || '[OBJETO DEL PODER]';
+                
+                // Fecha y lugar
+                const lugar = document.getElementById('lugar').value || 'Panamá';
+                const fechaInput = document.getElementById('fecha').value;
+                const fechaTexto = formatearFecha(fechaInput);
+                
+                // Construir el documento
+                let documentoHTML = '';
+                
+                // Logo
+                documentoHTML += '<div id="logoContainer" class="mb-4 logo-container">';
+                if (document.getElementById('logoPreview').src && !document.getElementById('logoPreview').classList.contains('hidden')) {
+                    documentoHTML += `<img src="${document.getElementById('logoPreview').src}" id="previewLogo" style="max-width: 150px; max-height: 80px;">`;
+                    documentoHTML += `<div class="logo-controls">
+                        <button class="logo-control" onclick="document.getElementById('logoContainer').innerHTML = ''; document.getElementById('logoPreview').classList.add('hidden'); document.getElementById('logoUpload').value = '';" title="Eliminar logo">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                }
+                documentoHTML += '</div>';
+                
+                // Título
+                documentoHTML += `<div class="mb-6">
+                    <span class="uppercase-bold">PODER</span>
+                </div>`;
+                
+                // Destinatario
+                documentoHTML += `<div class="mb-6">
+                    <p class="uppercase-bold">SEÑORES</p>
+                    <p class="uppercase-bold">${entityName}</p>
+                    <p>E. S. D.</p>
+                </div>`;
+                
+                // Cuerpo del documento
+                let cuerpoDocumento = '';
+                
+                // Inicio del texto
+                cuerpoDocumento += `<p>Quien suscribe, <span class="uppercase-bold">${otorganteNombre}</span>, ${otorganteGeneroTexto}, ${otorganteNacionalidadTexto}, mayor de edad, portador${otorganteGenero === 'mujer' ? 'a' : ''} de la cédula de indentidad personal No. <span class="uppercase-bold">${otorganteCedula}</span>`;
+                
+                // Domicilio del otorgante
+                if (document.getElementById('toggleDomicilio').checked) {
+                    cuerpoDocumento += `, con domicilio ubicado en <span class="uppercase-bold">${otorganteDomicilio}</span>`;
+                }
+                
+                // Organización
+                if (incluirOrganizacion) {
+                    cuerpoDocumento += `, Representante Legal de <span class="uppercase-bold">${organizacionNombre}</span>, ${organizacionTipoTexto}`;
+                    
+                    // Cargo
+                    if (document.getElementById('toggleCargos').checked) {
+                        cuerpoDocumento += ` que ocupa el cargo de <span class="uppercase-bold">${otorganteCargo}</span>`;
+                    }
+                    
+                    cuerpoDocumento += ` de la Asociación de Interés Público denominada Centro de Estudios Panamá, con personería jurídica debidamente reconocida e inscrita al Folio No. <span class="uppercase-bold">${organizacionFolio}</span> en el Registro Público de Panamá, con domicilio en <span class="uppercase-bold">${organizacionDomicilio}</span>, acudo respetuosamente ante su despacho en calidad de ${otorganteCargo} del Centro de Estudios Panamá`;
+                } else {
+                    if (document.getElementById('toggleCargos').checked) {
+                        cuerpoDocumento += `, quien ocupa el cargo de <span class="uppercase-bold">${otorganteCargo}</span>`;
+                    }
+                    cuerpoDocumento += `, acudo respetuosamente ante su despacho`;
+                }
+                
+                // Objeto del poder
+                const licTitulo = apoderadoGenero === 'mujer' ? 'Licenciada' : 'Licenciado';
+                cuerpoDocumento += `, con el objeto de Otorgar Poder ${powerType === 'especial' ? 'Especial' : 'General'} amplio y suficiente como en derecho se requiere ${apoderadoGenero === 'mujer' ? 'a la' : 'al'} ${licTitulo} <span class="uppercase-bold">${apoderadoNombre}</span>, ${apoderadoGeneroTexto}, ${apoderadoNacionalidadTexto}, mayor de edad, portador${apoderadoGenero === 'mujer' ? 'a' : ''} de la cédula de identidad personal No. <span class="uppercase-bold">${apoderadoCedula}</span>, ${apoderadoProfesionTexto} en ejercicio`;
+                
+                // Número de idoneidad
+                if (incluirIdoneidad) {
+                    cuerpoDocumento += `, con número de idoneidad No. <span class="uppercase-bold">${apoderadoIdoneidad}</span>`;
+                }
+                
+                // Cargo del apoderado
+                if (incluirApoderadoCargo) {
+                    cuerpoDocumento += `, <span class="uppercase-bold">${apoderadoCargo}</span> del Centro de Estudios Panama`;
+                }
+                
+                // Contacto del apoderado
+                cuerpoDocumento += `, con correo electrónico <span class="uppercase-bold">${apoderadoEmail}</span> y con domicilio profesional ubicado en <span class="uppercase-bold">${apoderadoDomicilio}</span>, localizable en los teléfonos <span class="uppercase-bold">${apoderadoTelefono}</span>, donde recibe notificaciones personales, para que, en representación de ${incluirOrganizacion ? 'la asociación' : 'mi persona'}, presente y gestione, ante la <span class="uppercase-bold">${entityName}</span>, <span class="uppercase-bold">${objetoPoder}</span>.</p>`;
+                
+                // Facultades
+                cuerpoDocumento += `<p>${apoderadoGenero === 'mujer' ? 'La' : 'El'} ${licTitulo} <span class="uppercase-bold">${apoderadoNombre}</span>, queda expresamente facultad${apoderadoGenero === 'mujer' ? 'a' : 'o'} para recibir, notificarse, solicitar, subsanar, obtener copias, comprometer, allanarse, desistir, transigir e interponer los recursos y acciones legales que estime conveniente para el mejor desempeño del presente mandato.</p>`;
+                
+                // Fecha y lugar (con espacios adicionales)
+                cuerpoDocumento += `<p><br><br>${lugar}, ${fechaTexto}.</p>`;
+                
+                // Firmas
+                cuerpoDocumento += `<div class="mt-16 flex justify-between">
+                    <div class="text-center" style="width: 45%;">
+                        <p class="uppercase-bold">OTORGO PODER</p>
+                        <div class="mt-16 signature-line"></div>
+                        <p class="uppercase-bold">${otorganteNombre}</p>
+                        <p class="font-bold">C.I.P. No. ${otorganteCedula}</p>
+                        ${document.getElementById('toggleCargos').checked ? `<p class="uppercase-bold">${otorganteCargo}</p>` : ''}
+                    </div>
+                    
+                    <div class="text-center" style="width: 45%;">
+                        <p class="uppercase-bold">ACEPTO PODER</p>
+                        <div class="mt-16 signature-line"></div>
+                        <p class="uppercase-bold">${apoderadoNombre}</p>
+                        <p class="font-bold">C.I.P. No. ${apoderadoCedula}</p>
+                        ${incluirApoderadoCargo ? `<p class="uppercase-bold">${apoderadoCargo}</p>` : ''}
+                    </div>
+                </div>`;
+                
+                // Actualizar la previsualización
+                documentoHTML += cuerpoDocumento;
+                document.getElementById('documentPreview').innerHTML = documentoHTML;
+                
+                // Volver a agregar los manejadores de redimensionamiento para el logo si existe
+                const logoImg = document.getElementById('previewLogo');
+                if (logoImg) {
+                    const logoContainer = document.getElementById('logoContainer');
+                    addResizeHandles(logoContainer, logoImg);
+                }
+                
+                showNotification('Documento generado correctamente');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94d6c96f2280ccec',t:'MTc0OTUzNjY3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" style="position: absolute; top: 0px; left: 0px; border: medium; visibility: hidden;" width="1"></iframe>
+</body></html>
